@@ -36,20 +36,31 @@ def index(request):
 
             WeatherDataRow.objects.bulk_create(csv_as_list)
 
+            table=WeatherDataTable(WeatherDataRow.objects.filter(parent_file_id=document_object.id))
+
+            request.session['document_id']=document_object.id
 
             is_active_file = True
 
-            # table=WeatherDataTable(WeatherDataRow.objects.all())
-            table=WeatherDataTable(WeatherDataRow.objects.filter(parent_file_id=document_object.id))
-
-
             data = {
                 'is_active_file': is_active_file,
-                'csv_as_list': csv_as_list,
-                'table':table
+                'table':table,
+                'dates':None
             }
 
             return render(request, 'weather/index.html', {'form': form, 'data': data})
         if "date_picker_submit" in request.POST:
-            print(request.POST)
+            table=WeatherDataTable(WeatherDataRow.objects.filter(parent_file_id=request.session['document_id'], date__range=[request.POST['start_date'], request.POST['end_date']]))
+            is_active_file = True
+            print(request.POST['start_date'])
+            print(request.POST['end_date'])
+
+            data = {
+                'is_active_file': is_active_file,
+                'table':table,
+                'dates':{'start_date':request.POST['start_date'], 'end_date':request.POST['end_date']}
+            }
+            return render(request, 'weather/index.html', {'form': form, 'data': data})
+
+
     return render(request, 'weather/index.html', {'form': form})

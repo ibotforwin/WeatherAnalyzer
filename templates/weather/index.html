@@ -16,12 +16,7 @@
         {% if data.is_active_file == True %}
             Date Range:
             {% include "weather/date_picker.html" %}
-            <form method="post">
-                {% csrf_token %}
-                <input type="hidden" name="start_date" value="" id="start_date">
-                <input type="hidden" name="end_date" value="" id="end_date">
-                <button class="btn btn-success" type="submit" name="date_picker_submit">Submit</button>
-            </form>
+
 
             {% render_table data.table %}
 
