@@ -11,14 +11,14 @@ class UploadedDocument(models.Model):
 #Every row belongs to the parent document. Upon deletion of UploadedDocument, all the rows are deleted as well.
 class WeatherDataRow(models.Model):
     parent_file=models.ForeignKey(UploadedDocument, on_delete=models.CASCADE)
-    date_time= models.DateField()
-    min_temp=models.FloatField()
-    max_temp=models.FloatField()
-    mean_temp=models.FloatField()
-    heat_degree_days=models.FloatField()
-    total_rain=models.FloatField()
-    total_snow=models.FloatField()
-    speed_max_gusts=models.FloatField()
+    date= models.DateField()
+    min_temp=models.FloatField(default=0)
+    max_temp=models.FloatField(default=0)
+    mean_temp=models.FloatField(default=0)
+    heat_degree_days=models.FloatField(default=0)
+    total_rain=models.FloatField(default=0)
+    total_snow=models.FloatField(default=0)
+    speed_max_gusts=models.FloatField(default=0, blank=True)
 
     def __str__(self) -> str:
-        return str(self.name)
+        return str(self.parent_file)
