@@ -8,11 +8,10 @@
             {% csrf_token %}
             {{ form.as_p }}
             {% if message %}
-            <div class="alert alert-primary">{{ message }}</div>
+                <div class="alert alert-primary">{{ message }}</div>
             {% endif %}
             <button class="btn btn-info" type="submit" name="uploading_file">Upload Weather CSV</button>
         </form>
-
         {% if data.is_active_file == True %}
             Date Range:
             {% include "weather/components/date_picker.html" %}
@@ -33,11 +32,9 @@
             <div class="row">
                 {% render_table data.table %}
             </div>
-                {% autoescape off %}
-   {{ data.plot_div }}
-  {% endautoescape %}
+            {% autoescape off %}
+                {{ data.plot_div }}
+            {% endautoescape %}
         {% endif %}
-
-
     </div>
 {% endblock %}
