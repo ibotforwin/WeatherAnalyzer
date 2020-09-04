@@ -9,8 +9,10 @@ from django_tables2.export.export import TableExport
 from datetime import datetime
 import plotly.offline as py
 import plotly.graph_objs as go
-import numpy as np
 from .components.graph_data import return_plot_div
+from django.core.mail import send_mail
+from django.conf import settings
+
 
 def index(request):
     # We always want to show a form in case a user wants to upload a different file to work with.
@@ -32,16 +34,29 @@ def index(request):
 
         #Runs when a new file is uploaded
         if "uploading_file" in request.POST:
+
+            # Send admin email
+            subject='CSV Uploaded'
+            message='A CSV file has been uploaded.'
+            email_from=settings.EMAIL_HOST_USER
+            recipient_list=['testmail9920123@gmail.com']
+
+            send_mail(subject,message,email_from,recipient_list)
+
+
             csv_as_list = []
             if form.is_valid():
                 document_object = form.save()
             else:
                 form = UploadedDocumentForm()
             reader = csv.reader(open(document_object.document.path, 'r'))
+            print('verification')
+
             request.session['date__range']=None
 
             # TODO Check if excel file is valid, maybe check column titles, value existence, and file extension. Return meaningful error to user in the form of a message.
             # Iterating through reader and appending relevant data to a list
+
             for i, row in enumerate(reader):
                 if i > 0:
                     for j, item in enumerate(row):
