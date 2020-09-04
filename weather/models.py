@@ -1,10 +1,11 @@
 from django.db import models
-
+from .validators import validate_file_extension
 # Weather Data Models
 #TODO Validate data on database level by setting min and max values
 
+
 class UploadedDocument(models.Model):
-    document = models.FileField(upload_to='documents/')
+    document = models.FileField(upload_to='documents/', validators=[validate_file_extension])
     uploaded_at = models.DateTimeField(auto_now_add=True)
 
 

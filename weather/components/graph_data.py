@@ -1,7 +1,7 @@
 import plotly.offline as py
 import plotly.graph_objs as go
 from ..models import WeatherDataRow
-def return_plot_div(parent_file_id, date__range):
+def return_plot_div(parent_file_id, date__range=None):
     graph_date = []
     graph_min_temp = []
     graph_max_temp = []
@@ -10,8 +10,12 @@ def return_plot_div(parent_file_id, date__range):
     graph_total_rain = []
     graph_total_snow = []
     graph_speed_max_gusts = []
-    weather_data = WeatherDataRow.objects.filter(parent_file_id=parent_file_id,
-                                                 date__range=date__range)
+    if date__range!=None:
+        weather_data = WeatherDataRow.objects.filter(parent_file_id=parent_file_id,
+                                                     date__range=date__range)
+    else:
+        weather_data = WeatherDataRow.objects.filter(parent_file_id=parent_file_id)
+
     for data in weather_data:
         graph_date.append(data.date)
         graph_min_temp.append(data.min_temp)
