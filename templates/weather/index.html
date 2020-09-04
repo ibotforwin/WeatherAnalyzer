@@ -1,9 +1,5 @@
 {% extends 'base.html' %}
-{% load bootstrap4 %}
-{% bootstrap_css %}
-{% bootstrap_javascript jquery='full' %}
 {% load render_table from django_tables2 %}
-{{ form.media }}
 {% block content %}
     <div class="container">
         <div class="row justify-content-center"><h1 class="m-5">Weather Analyzer</h1>
@@ -16,10 +12,69 @@
         {% if data.is_active_file == True %}
             Date Range:
             {% include "weather/date_picker.html" %}
+            <form method="post">
+                {% csrf_token %}
+                <input type="hidden" name="start_date" value="" id="start_date">
+                <input type="hidden" name="end_date" value="" id="end_date">
 
-
-            {% render_table data.table %}
-
+                <div class="row">
+                    <button class="btn btn-success" type="submit" name="date_picker_submit">Update Date Range</button>
+                </div>
+            </form>
+            <form method="post">
+                {% csrf_token %}
+                <input type="checkbox" {% if data.columns.date == True %}checked='checked'{% endif %} name="date"
+                       value="true" id="date_box">
+                <label class="form-check-label" for="date_box">
+                    Date
+                </label>
+                <input type="checkbox" {% if data.columns.min_temp == True %}checked='checked'{% endif %}
+                       name="min_temp" value="true" id="min_temp_box">
+                <label class="form-check-label" for="min_temp_box">
+                    Min Temp
+                </label>
+                <input type="checkbox" {% if data.columns.max_temp == True %}checked='checked'{% endif %}
+                       name="max_temp" value="true" id="max_temp_box">
+                <label class="form-check-label" for="max_temp_box">
+                    Max Temp
+                </label>
+                <input type="checkbox" {% if data.columns.mean_temp == True %}checked='checked'{% endif %}
+                       name="mean_temp" value="true" id="mean_temp_box">
+                <label class="form-check-label" for="mean_temp_box">
+                    Mean Temp
+                </label>
+                <input type="checkbox" {% if data.columns.heat_degree_days == True %}checked='checked'{% endif %}
+                       name="heat_degree_days" value="true" id="heat_degree_days_box">
+                <label class="form-check-label" for="heat_degree_days_box">
+                    Heat Degree Days
+                </label>
+                <input type="checkbox" {% if data.columns.total_rain == True %}checked='checked'{% endif %}
+                       name="total_rain" value="true" id="total_rain_box">
+                <label class="form-check-label" for="total_rain_box">
+                    Total Rain
+                </label>
+                <input type="checkbox" {% if data.columns.total_snow == True %}checked='checked'{% endif %}
+                       name="total_snow" value="true" id="total_snow_box">
+                <label class="form-check-label" for="total_snow_box">
+                    Total Snow
+                </label>
+                <input type="checkbox" {% if data.columns.speed_max_gusts == True %}checked='checked'{% endif %}
+                       name="speed_max_gusts" value="true" id="speed_max_gusts_box">
+                <label class="form-check-label" for="speed_max_gusts_box">
+                    Speed Max Gusts
+                </label>
+                <div class="row">
+                    <button class="btn btn-success" type="submit" name="update_columns">Update Columns</button>
+                </div>
+            </form>
+            <form method="post">
+                {% csrf_token %}
+                <button class="btn btn-info" type="submit" name="export_" value="csv">Download CSV</button>
+                <button class="btn btn-info" type="submit" name="export_" value="json">Download JSON</button>
+            </form>
+            <div class="row">
+                {% render_table data.table %}
+            </div>
         {% endif %}
     </div>
 {% endblock %}
