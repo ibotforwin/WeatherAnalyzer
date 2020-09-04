@@ -40,7 +40,6 @@ INSTALLED_APPS = [
     'weather',
     'django_tables2',
     'bootstrap4',
-    # 'bootstrap_datepicker_plus',
 ]
 
 MIDDLEWARE = [

@@ -1,23 +1,19 @@
 {% load static %}
-<html lang="en">
 <head>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.4.4/umd/popper.min.js" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.2/js/bootstrap.min.js" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.4.4/umd/popper.min.js"
+            crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.2/js/bootstrap.min.js"
+            crossorigin="anonymous"></script>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+
     <link href="https://bootswatch.com/4/litera/bootstrap.min.css" rel="stylesheet">
     <link href='//fonts.googleapis.com/css?family=Lobster&subset=latin,latin-ext' rel='stylesheet' type='text/css'>
-    <script
-        type="text/javascript"
-        src="{% static "django_tables2_column_shifter/js/django_tables2_column_shifter.min.js" %}">
-    </script>
     <meta charset="UTF-8">
     <title>Weather Analysis Tool</title>
 </head>
 <body>
-
-   {% block content %}
-
-    {% endblock %}
-
+{% block content %}
+{% endblock %}
 </body>
 </html>

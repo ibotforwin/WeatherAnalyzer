@@ -7,6 +7,10 @@ from django_tables2.export.views import ExportMixin
 from django_tables2.config import RequestConfig
 from django_tables2.export.export import TableExport
 from datetime import datetime
+import plotly.offline as py
+import plotly.graph_objs as go
+import numpy as np
+from .components.graph_data import return_plot_div
 
 def index(request):
     # We always want to show a form in case a user wants to upload a different file to work with.
@@ -51,12 +55,14 @@ def index(request):
             table=WeatherDataTable(WeatherDataRow.objects.filter(parent_file_id=document_object.id), exclude=('parent_file', 'id',))
             request.session['document_id']=document_object.id
             is_active_file = True
+
             data = {
                 'is_active_file': is_active_file,
                 'table':table,
                 'dates':None,
                 'columns':{'date':True,'min_temp':True,'max_temp':True,
-                           'mean_temp':True, 'heat_degree_days':True, 'total_rain':True,'total_snow':True,'speed_max_gusts':True}
+                           'mean_temp':True, 'heat_degree_days':True, 'total_rain':True,'total_snow':True,'speed_max_gusts':True},
+
             }
 
             return render(request, 'weather/index.html', {'form': form, 'data': data})
@@ -82,11 +88,16 @@ def index(request):
             except:
                 columns={'date':True,'min_temp':True,'max_temp':True,
                            'mean_temp':True, 'heat_degree_days':True, 'total_rain':True,'total_snow':True,'speed_max_gusts':True}
+
+            #return_plot_div is a function from /components/ which returns a plot_div
+            plot_div=return_plot_div(parent_file_id=request.session['document_id'], date__range=request.session['date__range'])
+
             data = {
                 'is_active_file': is_active_file,
                 'table':table,
                 'dates':{'start_date':request.POST['start_date'], 'end_date':request.POST['end_date']},
-                'columns':columns
+                'columns':columns,
+                'plot_div': plot_div
             }
             request.session['start_date']=request.POST['start_date']
             request.session['end_date']=request.POST['end_date']
@@ -142,4 +153,7 @@ def index(request):
                 'columns': columns,
             }
             return render(request, 'weather/index.html', {'form': form, 'data': data})
+
+
+
     return render(request, 'weather/index.html', {'form': form})
