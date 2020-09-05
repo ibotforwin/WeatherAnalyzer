@@ -12,10 +12,8 @@ from django.conf import settings
 def index(request):
     # We always want to show a form in case a user wants to upload a different file to work with.
     form = UploadedDocumentForm(request.POST, request.FILES)
-    is_active_file = False
     list_of_columns_names = ['date', 'min_temp', 'max_temp', 'mean_temp', 'heat_degree_days', 'total_rain',
                              'total_snow', 'speed_max_gusts']
-
     class WeatherDataTable(tables.Table):
         export_formats = ['csv', 'xls']
         date = tables.Column(orderable=False)
@@ -26,7 +24,6 @@ def index(request):
         total_rain = tables.Column(orderable=False)
         total_snow = tables.Column(orderable=False)
         speed_max_gusts = tables.Column(orderable=False)
-
         class Meta:
             model = WeatherDataRow
             attrs = {"class": "table"}
@@ -64,7 +61,6 @@ def index(request):
 
             # TODO Check if excel file is valid, maybe check column titles, value existence, and file extension. Return meaningful error to user in the form of a message.
             # Iterating through reader and appending relevant data to a list
-
             for i, row in enumerate(reader):
                 if i > 0:
                     for j, item in enumerate(row):
@@ -79,7 +75,6 @@ def index(request):
                         WeatherDataRow(parent_file=document_object, date=row[4], min_temp=row[11],
                                        max_temp=row[9], mean_temp=row[13], heat_degree_days=row[15], total_rain=row[19],
                                        total_snow=row[21], speed_max_gusts=row[29]))
-
             WeatherDataRow.objects.bulk_create(csv_as_list)
             table = WeatherDataTable(WeatherDataRow.objects.filter(parent_file_id=document_object.id),
                                      exclude=('parent_file', 'id',))
@@ -108,8 +103,6 @@ def index(request):
                     request.session['date__range'] = [request.POST['start_date'], request.POST['end_date']]
                 except:
                     request.session['date__range'] = ['2020-05-16', '2020-08-16']
-
-            print(request.session['date__range'])
             try:
                 table = WeatherDataTable(WeatherDataRow.objects.filter(parent_file_id=request.session['document_id'], date__range=request.session['date__range']), exclude=tuple(request.session['list_of_excluded']))
             except:
@@ -119,7 +112,7 @@ def index(request):
                                          exclude=('parent_file', 'id',))
             is_active_file = True
 
-            # TODO Check if date is earlier than today's date or not. We should not be showing 0 value future weather.
+            # TODO Check if date is earlier than today's date or not. Maybe we should not be showing 0 value future weather.
             columns = {}
             for item in list_of_columns_names:
                 if item not in list_of_excluded:
