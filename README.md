@@ -1,7 +1,7 @@
 # WeatherAnalyzer
 A simple weather data viewing tool
 
-![Preview](https://github.com/ibotforwin/WeatherAnalyzer/blob/master/media/demo.png)
+![Preview](media/demo_preview.png)
 
 # Versions
 * Django 3.x
