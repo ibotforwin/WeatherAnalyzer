@@ -1,6 +1,8 @@
 # WeatherAnalyzer
 A simple weather data viewing tool
 
+![Preview](media/demo_preview.png)
+
 # Versions
 * Django 3.x
 * Python 3.x
