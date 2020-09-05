@@ -14,11 +14,17 @@ A simple weather data viewing tool
 # Front-End Functionality
 ## Upload CSV file
 * Files from [weather website](https://climate.weather.gc.ca/climate_data/daily_data_e.html?StationID=51459) accepted
+* File Validation - Return Error Message Specifying Issue
+  * Check file extension
+  * Check number of columns
+  * Check column titles
+Example:
+![Preview](media/sample_error.png)
   
 ## Date Picker
-* On upload
+* On Upload
   * Load to date range of data available in the CSV
-* On change
+* On Change
   * Update table and graph data to represent selected date range
   
 ## Table
@@ -31,9 +37,3 @@ A simple weather data viewing tool
   
 ## Export CSV/JSON
 * Downloads CSV/JSON file with current table values
-
-# Back-End Functionality
-* File Validation
-  * Check file extension
-  * Check number of columns
-  * Check column titles
