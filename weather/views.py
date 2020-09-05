@@ -108,10 +108,10 @@ def index(request):
                     request.session['date__range'] = [request.POST['start_date'], request.POST['end_date']]
                 except:
                     request.session['date__range'] = ['2020-05-16', '2020-08-16']
+
+            print(request.session['date__range'])
             try:
-                table = WeatherDataTable(WeatherDataRow.objects.filter(parent_file_id=request.session['document_id'],
-                                                                       date__range=request.session['date__range']),
-                                         exclude=tuple(request.session['list_of_excluded']))
+                table = WeatherDataTable(WeatherDataRow.objects.filter(parent_file_id=request.session['document_id'], date__range=request.session['date__range']), exclude=tuple(request.session['list_of_excluded']))
             except:
                 list_of_excluded = ['parent_file', 'id']
                 table = WeatherDataTable(WeatherDataRow.objects.filter(parent_file_id=request.session['document_id'],

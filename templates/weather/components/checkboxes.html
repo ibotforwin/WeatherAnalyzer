@@ -1,5 +1,6 @@
 <form method="post">
     {% csrf_token %}
+{#    TODO This can be done with a loop instead #}
     <input type="checkbox" {% if data.columns.date == True %}checked='checked'{% endif %} name="date"
            value="true" id="date_box">
     <label class="form-check-label" for="date_box">
