@@ -9,12 +9,9 @@ A simple weather data viewing tool
 * django_tables2
 * plotly
 
-# Functionality
-## Upload CSV file from [weather website](https://climate.weather.gc.ca/climate_data/daily_data_e.html?StationID=51459)
-* Validation
-  * Check file extension
-  * Check number of columns
-  * Check column titles
+# Front-End Functionality
+## Upload CSV file
+* Files from [weather website](https://climate.weather.gc.ca/climate_data/daily_data_e.html?StationID=51459) accepted
   
 ## Date Picker
 * On upload
@@ -29,3 +26,12 @@ A simple weather data viewing tool
 ## Graph
 * Select/Deselect Lines
   * Graph adds/removes appropriate lines
+  
+## Export CSV/JSON
+* Downloads CSV/JSON file with current table values
+
+# Back-End Functionality
+* File Validation
+  * Check file extension
+  * Check number of columns
+  * Check column titles
