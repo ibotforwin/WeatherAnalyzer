@@ -4,6 +4,7 @@
     <div class="container">
         <div class="row justify-content-center"><h1 class="m-5">Weather Trends</h1>
         </div>
+
         <form method="post" enctype="multipart/form-data">
             {% csrf_token %}
             {{ form.as_p }}
@@ -24,17 +25,23 @@
                 </div>
             </form>
             {% include "weather/components/checkboxes.html" %}
+
+<div class="row">
+            <div class="col-7">
             <form method="post">
                 {% csrf_token %}
                 <button class="btn btn-info" type="submit" name="export_" value="csv">Download CSV</button>
                 <button class="btn btn-info" type="submit" name="export_" value="json">Download JSON</button>
             </form>
-            <div class="row">
+
                 {% render_table data.table %}
             </div>
+            <div class="col-5">
             {% autoescape off %}
                 {{ data.plot_div }}
             {% endautoescape %}
+            </div>
+</div>
         {% endif %}
     </div>
 {% endblock %}
