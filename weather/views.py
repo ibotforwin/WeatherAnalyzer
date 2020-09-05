@@ -1,33 +1,18 @@
 from django.shortcuts import render
 from .forms import UploadedDocumentForm
 import csv
+from .components.weather_data_table_class import WeatherDataTable
 from .models import WeatherDataRow
-import django_tables2 as tables
 from django_tables2.export.export import TableExport
 from .components.graph_data import return_plot_div
 from django.core.mail import send_mail
 from django.conf import settings
-
 
 def index(request):
     # We always want to show a form in case a user wants to upload a different file to work with.
     form = UploadedDocumentForm(request.POST, request.FILES)
     list_of_columns_names = ['date', 'min_temp', 'max_temp', 'mean_temp', 'heat_degree_days', 'total_rain',
                              'total_snow', 'speed_max_gusts']
-    class WeatherDataTable(tables.Table):
-        export_formats = ['csv', 'xls']
-        date = tables.Column(orderable=False)
-        min_temp = tables.Column(orderable=False)
-        max_temp = tables.Column(orderable=False)
-        mean_temp = tables.Column(orderable=False)
-        heat_degree_days = tables.Column(orderable=False)
-        total_rain = tables.Column(orderable=False)
-        total_snow = tables.Column(orderable=False)
-        speed_max_gusts = tables.Column(orderable=False)
-        class Meta:
-            model = WeatherDataRow
-            attrs = {"class": "table"}
-
     if request.method == 'POST':
 
         # Runs when a new file is uploaded
