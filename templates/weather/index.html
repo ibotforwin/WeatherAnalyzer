@@ -27,7 +27,7 @@
             {% include "weather/components/checkboxes.html" %}
 
 <div class="row">
-            <div class="col-7">
+            <div class="col-sm-12 col-md-12 col-lg-6">
             <form method="post">
                 {% csrf_token %}
                 <button class="btn btn-info" type="submit" name="export_" value="csv">Download CSV</button>
@@ -36,7 +36,7 @@
 
                 {% render_table data.table %}
             </div>
-            <div class="col-5">
+            <div class="col-sm-12 col-md-12 col-lg-6">
             {% autoescape off %}
                 {{ data.plot_div }}
             {% endautoescape %}
