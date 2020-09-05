@@ -15,11 +15,11 @@ A simple weather data viewing tool
 ## Upload CSV file
 * Files from [weather website](https://climate.weather.gc.ca/climate_data/daily_data_e.html?StationID=51459) accepted
 * File Validation - Return Error Message Specifying Issue
-Example:
-![Preview](media/sample_error.png)
   * Check file extension
   * Check number of columns
   * Check column titles
+Example:
+![Preview](media/sample_error.png)
   
 ## Date Picker
 * On Upload
