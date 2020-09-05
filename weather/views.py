@@ -5,8 +5,8 @@ from .components.weather_data_table_class import WeatherDataTable
 from .models import WeatherDataRow
 from django_tables2.export.export import TableExport
 from .components.graph_data import return_plot_div
-from django.core.mail import send_mail
-from django.conf import settings
+from .components.email_on_upload import send_email_upload
+
 
 def index(request):
     # We always want to show a form in case a user wants to upload a different file to work with.
@@ -19,6 +19,7 @@ def index(request):
         if "uploading_file" in request.POST:
             request.session['list_of_excluded'] = ['parent_file', 'id']
             request.session['columns'] = list_of_columns_names
+            request.session['date__range'] = None
             csv_as_list = []
             if form.is_valid():
                 document_object = form.save()
@@ -49,12 +50,7 @@ def index(request):
                     return render(request, 'weather/index.html', {'form': form, 'message': message})
 
             # Send admin email after validation
-            subject = 'CSV Uploaded'
-            message = 'A CSV file has been uploaded.'
-            email_from = settings.EMAIL_HOST_USER
-            recipient_list = ['testmail9920123@gmail.com']
-            send_mail(subject, message, email_from, recipient_list)
-            request.session['date__range'] = None
+            send_email_upload()
 
             # TODO Check if excel file is valid, maybe check column titles, value existence, and file extension. Return meaningful error to user in the form of a message.
             # Iterating through reader and appending relevant data to a list, reader already starts on second row (first numerical data) due to earlier next function called on reader.
