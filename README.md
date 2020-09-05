@@ -37,10 +37,3 @@ Example:
   
 ## Export CSV/JSON
 * Downloads CSV/JSON file with current table values
-
-# Back-End Functionality
-
-* Create models from uploaded files
-  * Each row of data is an object under the parent file
-  * Filter data to return specific date range data
-* 
