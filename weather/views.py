@@ -49,7 +49,7 @@ def index(request):
             for i, row in enumerate(reader):
                 if i > 0:
                     for j, item in enumerate(row):
-
+                        file_end_date=row[4]
                         if item == '':
                             row[j] = 0
                         if '<' in item:
@@ -60,6 +60,9 @@ def index(request):
                         WeatherDataRow(parent_file=document_object, date=row[4], min_temp=row[11],
                                        max_temp=row[9], mean_temp=row[13], heat_degree_days=row[15], total_rain=row[19],
                                        total_snow=row[21], speed_max_gusts=row[29]))
+                if i==1:
+                    file_start_date=row[4]
+            request.session['date__range'] = [file_start_date, file_end_date]
             WeatherDataRow.objects.bulk_create(csv_as_list)
             table = WeatherDataTable(WeatherDataRow.objects.filter(parent_file_id=document_object.id),
                                      exclude=('parent_file', 'id',))
