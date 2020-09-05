@@ -28,13 +28,25 @@ def index(request):
                 is_document_valid = False
 
             # Validating CSV file
+
+            # Checking file validity
             if is_document_valid == False:
                 message = 'This is an invalid document upload. Please try again and ensure you are using a .csv file.'
                 return render(request, 'weather/index.html', {'form': form, 'message': message})
+            # If file valid, read document.
             reader = csv.reader(open(document_object.document.path, 'r'))
-            if len(next(reader)) != 31:
+
+            # Assign first row to column_names, check for content and length
+            column_names=next(reader)
+            if len(column_names) != 31:
                 message = 'The CSV file does not contain enough columns. Please check to make sure you are using the correct .csv file.'
                 return render(request, 'weather/index.html', {'form': form, 'message': message})
+            required_column_names=['Longitude', 'Latitude', 'Station Name', 'Climate ID', 'Date/Time', 'Year', 'Month', 'Day', 'Data Quality', 'Max Temp', 'Max Temp Flag', 'Min Temp', 'Min Temp Flag', 'Mean Temp', 'Mean Temp Flag', 'Heat Deg Days', 'Heat Deg Days Flag', 'Cool Deg Days', 'Cool Deg Days Flag', 'Total Rain', 'Total Rain Flag', 'Total Snow', 'Total Snow Flag', 'Total Precip', 'Total Precip Flag', 'Snow on Grnd', 'Snow on Grnd Flag', 'Dir of Max Gust', 'Dir of Max Gust Flag', 'Spd of Max Gust', 'Spd of Max Gust Flag']
+            # Iterating instead of checking required_column_names==column_names. Non-standard characters might cause error otherwise.
+            for i, required_content in enumerate(required_column_names):
+                if required_content not in column_names[i]:
+                    message = 'The names of the columns do not match the required format.'
+                    return render(request, 'weather/index.html', {'form': form, 'message': message})
 
             # Send admin email after validation
             subject = 'CSV Uploaded'
@@ -45,22 +57,21 @@ def index(request):
             request.session['date__range'] = None
 
             # TODO Check if excel file is valid, maybe check column titles, value existence, and file extension. Return meaningful error to user in the form of a message.
-            # Iterating through reader and appending relevant data to a list
+            # Iterating through reader and appending relevant data to a list, reader already starts on second row (first numerical data) due to earlier next function called on reader.
             for i, row in enumerate(reader):
-                if i > 0:
-                    for j, item in enumerate(row):
-                        file_end_date=row[4]
-                        if item == '':
-                            row[j] = 0
-                        if '<' in item:
-                            row[j] = int(item.replace('<', ''))
-                        if '>' in item:
-                            row[j] = int(item.replace('>', ''))
-                    csv_as_list.append(
-                        WeatherDataRow(parent_file=document_object, date=row[4], min_temp=row[11],
-                                       max_temp=row[9], mean_temp=row[13], heat_degree_days=row[15], total_rain=row[19],
-                                       total_snow=row[21], speed_max_gusts=row[29]))
-                if i==1:
+                for j, item in enumerate(row):
+                    file_end_date=row[4]
+                    if item == '':
+                        row[j] = 0
+                    if '<' in item:
+                        row[j] = int(item.replace('<', ''))
+                    if '>' in item:
+                        row[j] = int(item.replace('>', ''))
+                csv_as_list.append(
+                    WeatherDataRow(parent_file=document_object, date=row[4], min_temp=row[11],
+                                   max_temp=row[9], mean_temp=row[13], heat_degree_days=row[15], total_rain=row[19],
+                                   total_snow=row[21], speed_max_gusts=row[29]))
+                if i==0:
                     file_start_date=row[4]
             request.session['date__range'] = [file_start_date, file_end_date]
             WeatherDataRow.objects.bulk_create(csv_as_list)
@@ -75,7 +86,7 @@ def index(request):
             data = {
                 'is_active_file': is_active_file,
                 'table': table,
-                'dates': None,
+                'dates': {'start_date': file_start_date, 'end_date': file_end_date},
                 'columns': {'date': True, 'min_temp': True, 'max_temp': True,
                             'mean_temp': True, 'heat_degree_days': True, 'total_rain': True, 'total_snow': True,
                             'speed_max_gusts': True},
