@@ -69,6 +69,8 @@ def index(request):
                 if i==0:
                     file_start_date=row[4]
             request.session['date__range'] = [file_start_date, file_end_date]
+            request.session['start_date']=file_start_date
+            request.session['end_date']=file_end_date
             WeatherDataRow.objects.bulk_create(csv_as_list)
             table = WeatherDataTable(WeatherDataRow.objects.filter(parent_file_id=document_object.id),
                                      exclude=('parent_file', 'id',))
