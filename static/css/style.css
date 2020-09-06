@@ -1,0 +1,10 @@
+.container-fluid {
+    padding-right: 50px;
+    padding-left: 50px;
+    margin-right: auto;
+    margin-left: auto;
+}
+
+.btn {
+    border-radius: 2px;
+}
