@@ -94,10 +94,10 @@ def index(request):
         if "date_picker_submit" in request.POST:
             list_of_excluded = request.session['list_of_excluded']
             if request.POST['start_date'] != '':
-                try:
-                    request.session['date__range'] = [request.POST['start_date'], request.POST['end_date']]
-                except:
-                    request.session['date__range'] = ['2020-05-16', '2020-08-16']
+                request.session['start_date'] = request.POST['start_date']
+                request.session['end_date'] = request.POST['end_date']
+                request.session['date__range'] = [request.POST['start_date'], request.POST['end_date']]
+
             try:
                 table = WeatherDataTable(WeatherDataRow.objects.filter(parent_file_id=request.session['document_id'], date__range=request.session['date__range']), exclude=tuple(request.session['list_of_excluded']))
             except:
@@ -121,12 +121,11 @@ def index(request):
             data = {
                 'is_active_file': is_active_file,
                 'table': table,
-                'dates': {'start_date': request.POST['start_date'], 'end_date': request.POST['end_date']},
+                'dates': {'start_date': request.session['start_date'], 'end_date': request.session['end_date']},
                 'columns': columns,
                 'plot_div': plot_div
             }
-            request.session['start_date'] = request.POST['start_date']
-            request.session['end_date'] = request.POST['end_date']
+
             return render(request, 'weather/index.html', {'form': form, 'data': data})
 
         # Performs CSV/JSON export download
