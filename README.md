@@ -18,7 +18,7 @@ A simple weather data viewing tool
   * Check file extension
   * Check number of columns
   * Check column titles
-Example:
+
 ![Preview](media/sample_error.png)
   
 ## Date Picker
