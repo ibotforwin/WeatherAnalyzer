@@ -51,7 +51,6 @@ def index(request):
             # Send admin email after validation
             send_email_upload()
 
-            # TODO Check if excel file is valid, maybe check column titles, value existence, and file extension. Return meaningful error to user in the form of a message.
             # Iterating through reader and appending relevant data to a list, reader already starts on second row (first numerical data) due to earlier next function called on reader.
             for i, row in enumerate(reader):
                 for j, item in enumerate(row):
@@ -68,10 +67,18 @@ def index(request):
                                    total_snow=row[21], speed_max_gusts=row[29]))
                 if i==0:
                     file_start_date=row[4]
+
+            # Assigning date values
             request.session['date__range'] = [file_start_date, file_end_date]
             request.session['start_date']=file_start_date
             request.session['end_date']=file_end_date
-            WeatherDataRow.objects.bulk_create(csv_as_list)
+
+            try:
+                WeatherDataRow.objects.bulk_create(csv_as_list)
+            except:
+                message = 'There was an issue processing the file. Please try again or select a different file.'
+                return render(request, 'weather/index.html', {'form': form, 'message': message})
+
             table = WeatherDataTable(WeatherDataRow.objects.filter(parent_file_id=document_object.id),
                                      exclude=('parent_file', 'id',))
             request.session['document_id'] = document_object.id
@@ -148,6 +155,8 @@ def index(request):
                     table = WeatherDataTable(
                         WeatherDataRow.objects.filter(parent_file_id=request.session['document_id'],
                                                       ))
+
+            # Export appropriate file type
             if request.POST['export_'] == 'csv':
                 export_format = request.GET.get("_export", 'csv')
             if request.POST['export_'] == 'json':
