@@ -12,7 +12,7 @@ class ModelsTestCase(TestCase):
                                       total_snow='11', speed_max_gusts='11')
 
     def test_document_name(self):
-        self.assertEqual((self.test_document.document.name), 'media/documents/test.csv')
+        self.assertEqual(self.test_document.document.name, 'media/documents/test.csv')
 
     def test_weather_row_date(self):
         test_weather_row = WeatherDataRow.objects.get(parent_file_id=self.test_document.id)

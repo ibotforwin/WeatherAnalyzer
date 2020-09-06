@@ -8,14 +8,20 @@
         <form method="post" enctype="multipart/form-data">
             {% csrf_token %}
             {{ form.as_p }}
+
+            {# Message displays various errors in the case of file upload related issues #}
             {% if message %}
                 <div class="alert alert-primary">{{ message|linebreaks }}</div>
             {% endif %}
+
             <button class="btn btn-info" type="submit" name="uploading_file">Upload Weather CSV</button>
         </form>
         {% if data.is_active_file == True %}
+
             Date Range:
+            {# Date picker is included from another file which utilizes data.start_date and data.end_date #}
             {% include "weather/components/date_picker.html" %}
+
             <form method="post">
                 {% csrf_token %}
                 <input type="hidden" name="start_date" value="" id="start_date">
@@ -24,24 +30,31 @@
                     <button class="btn btn-success" type="submit" name="date_picker_submit">Update Date Range</button>
                 </div>
             </form>
+
+            {# Checkboxes were seperated out for readability #}
             {% include "weather/components/checkboxes.html" %}
 
-<div class="row">
-            <div class="col-sm-12 col-md-12 col-lg-6">
-            <form method="post">
-                {% csrf_token %}
-                <button class="btn btn-info" type="submit" name="export_" value="csv">Download CSV</button>
-                <button class="btn btn-info" type="submit" name="export_" value="json">Download JSON</button>
-            </form>
+            <div class="row">
+                <div class="col-sm-12 col-md-12 col-lg-6">
+                    <form method="post">
+                        {% csrf_token %}
+                        <button class="btn btn-info" type="submit" name="export_" value="csv">Download CSV</button>
+                        <button class="btn btn-info" type="submit" name="export_" value="json">Download JSON</button>
+                    </form>
 
-                {% render_table data.table %}
+                    {#render_table displays the table using django_tables2#}
+                    {% render_table data.table %}
+
+                </div>
+                <div class="col-sm-12 col-md-12 col-lg-6">
+
+                    {# plot_div is passed through plotly #}
+                    {% autoescape off %}
+                        {{ data.plot_div }}
+                    {% endautoescape %}
+
+                </div>
             </div>
-            <div class="col-sm-12 col-md-12 col-lg-6">
-            {% autoescape off %}
-                {{ data.plot_div }}
-            {% endautoescape %}
-            </div>
-</div>
         {% endif %}
     </div>
 {% endblock %}
