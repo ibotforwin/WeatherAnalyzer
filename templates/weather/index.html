@@ -9,7 +9,7 @@
             {% csrf_token %}
             {{ form.as_p }}
             {% if message %}
-                <div class="alert alert-primary">{{ message }}</div>
+                <div class="alert alert-primary">{{ message|linebreaks }}</div>
             {% endif %}
             <button class="btn btn-info" type="submit" name="uploading_file">Upload Weather CSV</button>
         </form>

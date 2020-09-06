@@ -7,7 +7,6 @@ from django_tables2.export.export import TableExport
 from .components.graph_data import return_plot_div
 from .components.email_on_upload import send_email_upload
 
-
 def index(request):
     # We always want to show a form in case a user wants to upload a different file to work with.
     form = UploadedDocumentForm(request.POST, request.FILES)
@@ -17,6 +16,7 @@ def index(request):
 
         # Runs when a new file is uploaded
         if "uploading_file" in request.POST:
+            required_column_names=['Longitude', 'Latitude', 'Station Name', 'Climate ID', 'Date/Time', 'Year', 'Month', 'Day', 'Data Quality', 'Max Temp', 'Max Temp Flag', 'Min Temp', 'Min Temp Flag', 'Mean Temp', 'Mean Temp Flag', 'Heat Deg Days', 'Heat Deg Days Flag', 'Cool Deg Days', 'Cool Deg Days Flag', 'Total Rain', 'Total Rain Flag', 'Total Snow', 'Total Snow Flag', 'Total Precip', 'Total Precip Flag', 'Snow on Grnd', 'Snow on Grnd Flag', 'Dir of Max Gust', 'Dir of Max Gust Flag', 'Spd of Max Gust', 'Spd of Max Gust Flag']
             request.session['list_of_excluded'] = ['parent_file', 'id']
             request.session['columns'] = list_of_columns_names
             request.session['date__range'] = None
@@ -33,19 +33,19 @@ def index(request):
             if is_document_valid == False:
                 message = 'This is an invalid document upload. Please try again and ensure you are using a .csv file.'
                 return render(request, 'weather/index.html', {'form': form, 'message': message})
+
             # If file valid, read document.
             reader = csv.reader(open(document_object.document.path, 'r'))
 
             # Assign first row to column_names, check for content and length
             column_names=next(reader)
             if len(column_names) != 31:
-                message = 'The CSV file does not contain enough columns. Please check to make sure you are using the correct .csv file.'
+                message = 'The CSV file does not the right amount of columns. Please check to make sure you are using the correct .csv file.\nExpected columns: '+str(required_column_names)
                 return render(request, 'weather/index.html', {'form': form, 'message': message})
-            required_column_names=['Longitude', 'Latitude', 'Station Name', 'Climate ID', 'Date/Time', 'Year', 'Month', 'Day', 'Data Quality', 'Max Temp', 'Max Temp Flag', 'Min Temp', 'Min Temp Flag', 'Mean Temp', 'Mean Temp Flag', 'Heat Deg Days', 'Heat Deg Days Flag', 'Cool Deg Days', 'Cool Deg Days Flag', 'Total Rain', 'Total Rain Flag', 'Total Snow', 'Total Snow Flag', 'Total Precip', 'Total Precip Flag', 'Snow on Grnd', 'Snow on Grnd Flag', 'Dir of Max Gust', 'Dir of Max Gust Flag', 'Spd of Max Gust', 'Spd of Max Gust Flag']
             # Iterating instead of checking required_column_names==column_names. Non-standard characters might cause error otherwise.
             for i, required_content in enumerate(required_column_names):
                 if required_content not in column_names[i]:
-                    message = 'The names of the columns do not match the required format.'
+                    message = 'The names of the columns do not match the required format.\nExpected columns: '+str(required_column_names)
                     return render(request, 'weather/index.html', {'form': form, 'message': message})
 
             # Send admin email after validation
