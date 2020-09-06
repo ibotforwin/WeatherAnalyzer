@@ -29,7 +29,6 @@ def index(request):
                 is_document_valid = False
 
             # Validating CSV file
-
             # Checking file validity
             if is_document_valid == False:
                 message = 'This is an invalid document upload. Please try again and ensure you are using a .csv file.'
@@ -77,8 +76,8 @@ def index(request):
 
             # return_plot_div is a function from /components/ which returns a plot_div
             plot_div = return_plot_div(parent_file_id=request.session['document_id'])
-            is_active_file = True
 
+            is_active_file = True
             data = {
                 'is_active_file': is_active_file,
                 'table': table,
@@ -97,7 +96,6 @@ def index(request):
                 request.session['start_date'] = request.POST['start_date']
                 request.session['end_date'] = request.POST['end_date']
                 request.session['date__range'] = [request.POST['start_date'], request.POST['end_date']]
-
             try:
                 table = WeatherDataTable(WeatherDataRow.objects.filter(parent_file_id=request.session['document_id'], date__range=request.session['date__range']), exclude=tuple(request.session['list_of_excluded']))
             except:
@@ -105,7 +103,6 @@ def index(request):
                 table = WeatherDataTable(WeatherDataRow.objects.filter(parent_file_id=request.session['document_id'],
                                                                        date__range=request.session['date__range']),
                                          exclude=('parent_file', 'id',))
-            is_active_file = True
 
             # TODO Check if date is earlier than today's date or not. Maybe we should not be showing 0 value future weather.
             columns = {}
@@ -117,7 +114,7 @@ def index(request):
             # return_plot_div is a function from /components/ which returns a plot_div
             plot_div = return_plot_div(parent_file_id=request.session['document_id'],
                                        date__range=request.session['date__range'])
-
+            is_active_file = True
             data = {
                 'is_active_file': is_active_file,
                 'table': table,
