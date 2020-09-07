@@ -99,11 +99,13 @@ def index(request):
             # Bulk create WeatherDataRow
             try:
                 WeatherDataRow.objects.bulk_create(csv_as_list)
-                table = WeatherDataTable(WeatherDataRow.objects.filter(parent_file_id=document_object.id),
-                                         exclude=('parent_file', 'id',))
+
             except:
                 message = 'There was an issue processing the file. Please try again or select a different file.'
                 return render(request, 'weather/index.html', {'form': form, 'message': message})
+
+            table = WeatherDataTable(WeatherDataRow.objects.filter(parent_file_id=document_object.id).order_by('date'),
+                                     exclude=('parent_file', 'id',))
 
             # return_plot_div is a function from /components/ which returns a plot_div
             plot_div = return_plot_div(parent_file_id=request.session['document_id'])
@@ -128,12 +130,12 @@ def index(request):
                 request.session['date__range'] = [request.POST['start_date'], request.POST['end_date']]
             try:
                 table = WeatherDataTable(WeatherDataRow.objects.filter(parent_file_id=request.session['document_id'],
-                                                                       date__range=request.session['date__range']),
+                                                                       date__range=request.session['date__range']).order_by('date'),
                                          exclude=tuple(request.session['list_of_excluded']))
             except:
                 list_of_excluded = ['parent_file', 'id']
                 table = WeatherDataTable(WeatherDataRow.objects.filter(parent_file_id=request.session['document_id'],
-                                                                       date__range=request.session['date__range']),
+                                                                       date__range=request.session['date__range']).order_by('date'),
                                          exclude=('parent_file', 'id',))
 
             # TODO Maybe check if date is earlier than today's date or not. Should we be showing 0 value of future
@@ -164,21 +166,21 @@ def index(request):
                 if request.session['list_of_excluded']:
                     table = WeatherDataTable(
                         WeatherDataRow.objects.filter(parent_file_id=request.session['document_id'],
-                                                      date__range=request.session['date__range']),
+                                                      date__range=request.session['date__range']).order_by('date'),
                         exclude=tuple(request.session['list_of_excluded']))
                 else:
                     table = WeatherDataTable(
                         WeatherDataRow.objects.filter(parent_file_id=request.session['document_id'],
-                                                      date__range=request.session['date__range']))
+                                                      date__range=request.session['date__range']).order_by('date'))
             else:
                 if request.session['list_of_excluded']:
                     table = WeatherDataTable(
                         WeatherDataRow.objects.filter(parent_file_id=request.session['document_id'],
-                                                      ), exclude=tuple(request.session['list_of_excluded']))
+                                                      ), exclude=tuple(request.session['list_of_excluded']).order_by('date'))
                 else:
                     table = WeatherDataTable(
                         WeatherDataRow.objects.filter(parent_file_id=request.session['document_id'],
-                                                      ))
+                                                      ).order_by('date'))
 
             # Export appropriate file type
             if request.POST['export_'] == 'csv':
@@ -202,10 +204,10 @@ def index(request):
             request.session['list_of_excluded'] = list_of_excluded
             try:
                 table = WeatherDataTable(WeatherDataRow.objects.filter(parent_file_id=request.session['document_id'],
-                                                                       date__range=request.session['date__range']),
+                                                                       date__range=request.session['date__range']).order_by('date'),
                                          exclude=tuple(list_of_excluded))
             except:
-                table = WeatherDataTable(WeatherDataRow.objects.filter(parent_file_id=request.session['document_id']),
+                table = WeatherDataTable(WeatherDataRow.objects.filter(parent_file_id=request.session['document_id']).order_by('date'),
                                          exclude=tuple(list_of_excluded))
 
             # return_plot_div is a function from /components/ which returns a plot_div
