@@ -24,6 +24,8 @@ def index(request):
             if form.is_valid():
                 document_object = form.save()
                 is_document_valid = True
+                request.session['document_id'] = document_object.id
+                is_active_file=True
             else:
                 form = UploadedDocumentForm()
                 is_document_valid = False
@@ -81,12 +83,11 @@ def index(request):
 
             table = WeatherDataTable(WeatherDataRow.objects.filter(parent_file_id=document_object.id),
                                      exclude=('parent_file', 'id',))
-            request.session['document_id'] = document_object.id
+
 
             # return_plot_div is a function from /components/ which returns a plot_div
             plot_div = return_plot_div(parent_file_id=request.session['document_id'])
 
-            is_active_file = True
             data = {
                 'is_active_file': is_active_file,
                 'table': table,
