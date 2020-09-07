@@ -16,7 +16,17 @@ def index(request):
 
         # Runs when a new file is uploaded
         if "uploading_file" in request.POST:
-            required_column_names=['Longitude', 'Latitude', 'Station Name', 'Climate ID', 'Date/Time', 'Year', 'Month', 'Day', 'Data Quality', 'Max Temp', 'Max Temp Flag', 'Min Temp', 'Min Temp Flag', 'Mean Temp', 'Mean Temp Flag', 'Heat Deg Days', 'Heat Deg Days Flag', 'Cool Deg Days', 'Cool Deg Days Flag', 'Total Rain', 'Total Rain Flag', 'Total Snow', 'Total Snow Flag', 'Total Precip', 'Total Precip Flag', 'Snow on Grnd', 'Snow on Grnd Flag', 'Dir of Max Gust', 'Dir of Max Gust Flag', 'Spd of Max Gust', 'Spd of Max Gust Flag']
+
+            # These strings should appear in valid file column names.
+            required_column_names = ['Longitude', 'Latitude', 'Station Name', 'Climate ID', 'Date/Time', 'Year',
+                                     'Month', 'Day', 'Data Quality', 'Max Temp', 'Max Temp Flag', 'Min Temp',
+                                     'Min Temp Flag', 'Mean Temp', 'Mean Temp Flag', 'Heat Deg Days',
+                                     'Heat Deg Days Flag', 'Cool Deg Days', 'Cool Deg Days Flag', 'Total Rain',
+                                     'Total Rain Flag', 'Total Snow', 'Total Snow Flag', 'Total Precip',
+                                     'Total Precip Flag', 'Snow on Grnd', 'Snow on Grnd Flag', 'Dir of Max Gust',
+                                     'Dir of Max Gust Flag', 'Spd of Max Gust', 'Spd of Max Gust Flag']
+
+            # These are the default exclusions
             request.session['list_of_excluded'] = ['parent_file', 'id']
             request.session['columns'] = list_of_columns_names
             request.session['date__range'] = None
@@ -25,7 +35,7 @@ def index(request):
                 document_object = form.save()
                 is_document_valid = True
                 request.session['document_id'] = document_object.id
-                is_active_file=True
+                is_active_file = True
             else:
                 form = UploadedDocumentForm()
                 is_document_valid = False
@@ -40,25 +50,36 @@ def index(request):
             reader = csv.reader(open(document_object.document.path, 'r'))
 
             # Assign first row to column_names, check for content and length
-            column_names=next(reader)
+            column_names = next(reader)
             if len(column_names) != 31:
-                message = 'The CSV file does not the right amount of columns. Please check to make sure you are using the correct .csv file.\nExpected columns: '+str(required_column_names)
+                message = 'The CSV file does not the right amount of columns. ' \
+                          'Please check to make sure you are using the correct .csv file.\nExpected columns: '\
+                          + str(
+                    required_column_names)
                 return render(request, 'weather/index.html', {'form': form, 'message': message})
-            # Iterating instead of checking required_column_names==column_names. Non-standard characters might cause error otherwise.
+
+            # Iterating instead of checking required_column_names==column_names.
+            # Non-standard characters might cause error otherwise.
             for i, required_content in enumerate(required_column_names):
                 if required_content not in column_names[i]:
-                    message = 'The names of the columns do not match the required format.\nExpected columns: '+str(required_column_names)
+                    message = 'The names of the columns do not match the required format.\nExpected columns: ' + str(
+                        required_column_names)
                     return render(request, 'weather/index.html', {'form': form, 'message': message})
 
             # Send admin email after validation
             send_email_upload()
 
-            # Iterating through reader and appending relevant data to a list, reader already starts on second row (first numerical data) due to earlier next function called on reader.
+            # Iterating through reader and appending relevant data to a list, reader already starts on
+            # second row (first numerical data) due to earlier next function called on reader.
             for i, row in enumerate(reader):
                 for j, item in enumerate(row):
-                    file_end_date=row[4]
+                    file_end_date = row[4]
+
+                    # Assign 0 for blanks
                     if item == '':
                         row[j] = 0
+
+                    # Get rid of < and >, and set it to the boundary value.
                     if '<' in item:
                         row[j] = int(item.replace('<', ''))
                     if '>' in item:
@@ -67,23 +88,22 @@ def index(request):
                     WeatherDataRow(parent_file=document_object, date=row[4], min_temp=row[11],
                                    max_temp=row[9], mean_temp=row[13], heat_degree_days=row[15], total_rain=row[19],
                                    total_snow=row[21], speed_max_gusts=row[29]))
-                if i==0:
-                    file_start_date=row[4]
+                if i == 0:
+                    file_start_date = row[4]
 
             # Assigning date values
             request.session['date__range'] = [file_start_date, file_end_date]
-            request.session['start_date']=file_start_date
-            request.session['end_date']=file_end_date
+            request.session['start_date'] = file_start_date
+            request.session['end_date'] = file_end_date
 
+            # Bulk create WeatherDataRow
             try:
                 WeatherDataRow.objects.bulk_create(csv_as_list)
+                table = WeatherDataTable(WeatherDataRow.objects.filter(parent_file_id=document_object.id),
+                                         exclude=('parent_file', 'id',))
             except:
                 message = 'There was an issue processing the file. Please try again or select a different file.'
                 return render(request, 'weather/index.html', {'form': form, 'message': message})
-
-            table = WeatherDataTable(WeatherDataRow.objects.filter(parent_file_id=document_object.id),
-                                     exclude=('parent_file', 'id',))
-
 
             # return_plot_div is a function from /components/ which returns a plot_div
             plot_div = return_plot_div(parent_file_id=request.session['document_id'])
@@ -107,14 +127,17 @@ def index(request):
                 request.session['end_date'] = request.POST['end_date']
                 request.session['date__range'] = [request.POST['start_date'], request.POST['end_date']]
             try:
-                table = WeatherDataTable(WeatherDataRow.objects.filter(parent_file_id=request.session['document_id'], date__range=request.session['date__range']), exclude=tuple(request.session['list_of_excluded']))
+                table = WeatherDataTable(WeatherDataRow.objects.filter(parent_file_id=request.session['document_id'],
+                                                                       date__range=request.session['date__range']),
+                                         exclude=tuple(request.session['list_of_excluded']))
             except:
                 list_of_excluded = ['parent_file', 'id']
                 table = WeatherDataTable(WeatherDataRow.objects.filter(parent_file_id=request.session['document_id'],
                                                                        date__range=request.session['date__range']),
                                          exclude=('parent_file', 'id',))
 
-            # TODO Check if date is earlier than today's date or not. Maybe we should not be showing 0 value future weather.
+            # TODO Maybe check if date is earlier than today's date or not. Should we be showing 0 value of future
+            #  weather? Are there future forecast values?
             columns = {}
             for item in list_of_columns_names:
                 if item not in list_of_excluded:
