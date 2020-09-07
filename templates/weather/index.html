@@ -2,9 +2,7 @@
 {% load render_table from django_tables2 %}
 {% block content %}
     <div class="container-fluid">
-        <div class="row justify-content-center"><h1 class="m-5">Weather Trends</h1>
-        </div>
-
+    <div class="m-5">
         <form method="post" enctype="multipart/form-data">
             {% csrf_token %}
             {{ form.as_p }}
@@ -16,6 +14,7 @@
 
             <button class="btn btn-info" type="submit" name="uploading_file">Upload Weather CSV</button>
         </form>
+    </div>
         {% if data.is_active_file == True %}
 
             Date Range:
@@ -35,7 +34,7 @@
             {% include "weather/components/checkboxes.html" %}
 
             <div class="row">
-                <div class="col-sm-12 col-md-12 col-lg-6">
+                <div class="col-lg-6">
                     <form method="post">
                         {% csrf_token %}
                         <button class="btn btn-info" type="submit" name="export_" value="csv">Download CSV</button>
@@ -46,7 +45,7 @@
                     {% render_table data.table %}
 
                 </div>
-                <div class="col-sm-12 col-md-12 col-lg-6">
+                <div class="col-lg-6">
 
                     {# plot_div is passed through plotly #}
                     {% autoescape off %}
