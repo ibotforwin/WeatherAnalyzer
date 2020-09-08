@@ -7,7 +7,7 @@ A simple weather data viewing tool
 * Django 3.x
 * Python 3.x
 
-# Key Python libraries
+# Key Python Libraries
 * django_tables2
 * plotly
 
