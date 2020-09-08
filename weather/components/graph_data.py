@@ -63,8 +63,7 @@ def return_plot_div(parent_file_id, date__range=None):
         )
     ]
     layout = go.Layout(
-        autosize=False,
-        width=800,
+        autosize=True,
         height=600,
         xaxis=dict(
             title='Dates'

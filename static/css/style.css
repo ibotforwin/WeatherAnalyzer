@@ -8,3 +8,13 @@
 .btn {
     border-radius: 2px;
 }
+
+.header {
+  padding: 60px;
+  text-align: center;
+  background: #1abc9c;
+  color: white;
+  font-size: 30px;
+  background-image: url('/static/images/header_bg.png');
+  background-repeat: no-repeat;
+}
